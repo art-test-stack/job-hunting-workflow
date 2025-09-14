@@ -6,6 +6,11 @@ data/*
 model/*
 !/model/README.md
 
+.gradio/
+.cv_generator/
+.job_board_scraper/
+.archives/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
