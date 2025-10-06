@@ -1,9 +1,9 @@
 import gradio as gr
 from gradio_pdf import PDF
 
+from job_hunting_workflow.config import job_config_tab, profile_config_tab
 from job_hunting_workflow.cv_generate import cv_tab
 from job_hunting_workflow.scraper import scraper_tab
-from job_hunting_workflow.config import job_config_tab
 
 import pandas as pd
 
@@ -26,6 +26,8 @@ with gr.Blocks() as app:
     with gr.Tab("Edit Job Config"):
         job_config_tab()
 
-
+    with gr.Tab("Edit Profile"):
+        profile_config_tab()
+    
 if __name__ == "__main__":
     app.launch()

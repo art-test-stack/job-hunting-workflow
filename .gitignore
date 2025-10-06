@@ -1,11 +1,14 @@
-# Project files
+# Notebooks files
+*.ipynb
 
+# Project files
 data/*
 !/data/README.md
 
 model/*
 !/model/README.md
 
+# Package files
 .gradio/
 .cv_generator/
 .job_board_scraper/

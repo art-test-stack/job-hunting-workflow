@@ -24,16 +24,23 @@ def cv_tab() -> gr.Interface:
             label="Input Type",
             value="Job URL"
         )
+        top_margin = gr.Slider(
+            -1, 0,
+            value=-0.5,
+            step=0.05,
+            interactive=True,
+            label="Adapt Top Margin (in)",
+        )
 
-        def generate_cv_dynamic(cv_style: str, input_type: str, input_value: str):
+        def generate_cv_dynamic(cv_style: str, input_type: str, input_value: str, top_margin: float):
             cv_style = cv_style.lower()
             if input_type == "Offer ID":
                 offer_file = f"/Users/arthurtestard/job-board-scraper/data/desc/li-{input_value}.txt"
-                cv_pipeline = CVPipeline(offer_file=offer_file, params={"cv_style": cv_style})
+                cv_pipeline = CVPipeline(offer_file=offer_file, params={"cv_style": cv_style, "top_margin": top_margin})
             elif input_type == "Job URL":
                 job_data = get_job_by_url(input_value)
                 offer_dict = job_data
-                cv_pipeline = CVPipeline(offer_dict=offer_dict, params={"cv_style": cv_style})
+                cv_pipeline = CVPipeline(offer_dict=offer_dict, params={"cv_style": cv_style, "top_margin": top_margin})
             else:
                 raise ValueError("Invalid input type")
 
@@ -53,7 +60,7 @@ def cv_tab() -> gr.Interface:
 
         gr.Interface(
             generate_cv_dynamic,
-            [cv_style, input_type, input_value],
+            [cv_style, input_type, input_value, top_margin],
             [preview, download],
             description="Generate CV based on Offer ID or Job URL.",
             flagging_mode="never"

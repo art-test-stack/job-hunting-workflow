@@ -1,0 +1,37 @@
+version: '3.9'
+services:
+  backend:
+    build: ./backend
+    container_name: job-tracker-back
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+psycopg2://jobuser:jobpass@db:5432/jobtracker
+    depends_on:
+      - db
+
+  frontend:
+    build: ./job-tracker-web
+    container_name: job-tracker-web
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    depends_on:
+      - backend
+
+  db:
+    image: postgres:15
+    container_name: jobtracker_db
+    restart: always
+    environment:
+      POSTGRES_USER: jobuser
+      POSTGRES_PASSWORD: jobpass
+      POSTGRES_DB: jobtracker
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
