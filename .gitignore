@@ -1,5 +1,6 @@
 # Notebooks files
 *.ipynb
+*.db
 
 # Project files
 data/*

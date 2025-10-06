@@ -1,5 +1,10 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
 
+## First run
+
+```bash
+pydantic2ts --module pydantic2ts.examples.pydantic_models --output src/interfaces/output.ts
+```
 ## Getting Started
 
 First, run the development server:
