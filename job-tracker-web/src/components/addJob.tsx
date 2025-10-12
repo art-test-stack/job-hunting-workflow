@@ -2,14 +2,15 @@ import { Button } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import AddJobModal from "./addJobModal";
-import { JobStatus } from "@/pages/jobs";
+import { addJobJobAddPost } from "@/client";
+import { useUser } from "@auth0/nextjs-auth0";
+import { useContext } from "react";
+import { currentJobList } from "@/providers/jobs/jobListProvider";
 
-interface AddJobProps {
-    data: any,
-    setData: any
-}
 
-export default function AddJob(props: AddJobProps) {
+export default function AddJob() {
+    const [data, setData, loading] = useContext(currentJobList)
+    const { user } = useUser()
     const [opened, { open, close }] = useDisclosure(false); 
     const addJobForm = useForm({
         initialValues: {
@@ -17,19 +18,33 @@ export default function AddJob(props: AddJobProps) {
             company: "",
             location: "",
             contract: "",
-            type: "",
+            place: "",
             business: [],
             url: "",
             status: "",
-            application_date: new Date().toISOString().split('T')[0], // today's date in string format (YYYY-MM-DD)
+            applied_at: new Date().toISOString().split('T')[0], // today's date in string format (YYYY-MM-DD)
         }
     })
     const onClose = () => {
         return close()
     }
-    const onSubmit = () => {
-        props.setData([...props.data, addJobForm.values])
-        return close()
+    const onSubmit = async () => {
+        try {
+            const response = await addJobJobAddPost({ 
+                ...addJobForm.values, 
+                query: {
+                    user_id: user?.sub,
+                    ...addJobForm.values, 
+                } 
+            });
+            if (response.data) {
+                setData([...data, response.data]);
+            }
+        } catch (error) {
+            console.error("Failed to add job:", error);
+        } finally {
+            close();
+        }
     }
     return (
         <>

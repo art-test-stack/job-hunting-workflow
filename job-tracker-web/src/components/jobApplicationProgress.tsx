@@ -1,5 +1,9 @@
 import { JobStatus } from '@/pages/jobs';
+import { currentJobList } from '@/providers/jobs/jobListProvider';
 import { Center, SemiCircleProgress } from '@mantine/core';
+import { useContext } from 'react';
+import LoadingLayout from './loadingLayout';
+import { currentJobDetails, JobDetailsContext } from '@/providers/jobs/jobDetailsProvider';
 
 
 
@@ -22,13 +26,17 @@ const jobStatusProgressColor = (jobStatus: string) => {
   return 'blue'
   // jobStatus == JobStatus.Rejected ? "red" : jobStatus == JobStatus.Offer ? "green" : "blue"
 }
-interface JobApplicationProgressProps {
-    jobStatus: string
+
+export interface JobApplicationProgressProps {
+  jobId: string | string[] | undefined
 }
 
-
-export default function JobApplicationProgress(props: JobApplicationProgressProps) {
-  const jobStatus = props.jobStatus
+export default function JobApplicationProgress( props: JobApplicationProgressProps ) {
+  const [ data, useData, loading ] = useContext(JobDetailsContext)
+  console.log("data", data)
+  if (loading) { return <LoadingLayout/> }
+  const jobStatus = data?.status
+  console.log("jobStatus", jobStatus)
   const progressValue = jobStatusProgressMap[jobStatus];
   const filledSegmentColor = jobStatusProgressColor(jobStatus)
   return (
@@ -40,7 +48,7 @@ export default function JobApplicationProgress(props: JobApplicationProgressProp
         size={200}
         thickness={12}
         value={progressValue}
-        label={props.jobStatus}
+        label={jobStatus}
         transitionDuration={200}
       />
     </Center>

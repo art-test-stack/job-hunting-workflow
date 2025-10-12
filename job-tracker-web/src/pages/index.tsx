@@ -1,3 +1,4 @@
+import { useFavicon } from "@mantine/hooks";
 import { Geist, Geist_Mono } from "next/font/google";
 // import { auth0 } from "../../lib/auth0";
 
@@ -12,6 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export default function Home() {
+  const favicon = "logo.png"
+  useFavicon(favicon)
   return (
     <>
       <div>Hello world</div>

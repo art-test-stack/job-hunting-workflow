@@ -4,6 +4,7 @@ import { useUser } from "@auth0/nextjs-auth0";
 import Link from "next/link";
 import LoadingLayout from "@/components/loadingLayout";
 import { text } from "stream/consumers";
+import { postUserUserAuthGet } from "@/client"
 
 export interface LoginButtonProps {
   variant?: string;
@@ -32,24 +33,3 @@ export function AuthLoginButton(props: LoginButtonProps) {
     </Button>
   );
 }
-
-// export function AuthLoginButton(props: LoginButtonProps) {
-//   const { user, isLoading } = useUser();
-//   if (isLoading) {
-//     return <LoadingLayout/>
-//   }
-//   const handleAuth = () => window.location.href = user ? "/auth/logout" : "/auth/login" ;
-//   const textLayout = user ? "Log Out" : "Log In"
-  
-//   return (
-//     <Button
-//       onClick={handleAuth}
-//       variant={props.variant}
-//       size={props.size}
-//       className={props.className}
-//     >
-//       {textLayout}
-//     </Button>
-//   );
-// }
-

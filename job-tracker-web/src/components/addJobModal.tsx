@@ -19,7 +19,7 @@ export default function AddJobModal(props: AddJobModalProps) {
 
     const handleDateChange = (value: string | null) => {
         setDateValue(value);
-        form.setFieldValue('application_date', value);
+        form.setFieldValue('applied_at', value);
     };
     const checkJobForm = () => {
         if (!form.values.title) {
@@ -75,15 +75,15 @@ export default function AddJobModal(props: AddJobModalProps) {
             label="Contract"
             placeholder="Pick a Contract Type"
             data={['Full-Time', 'Part-Time', 'PhD', 'Internship']}
-            key={form.key('lontract')}
+            key={form.key('contract')}
             {...form.getInputProps('contract')}
         />
         <Select
-            label="Type"
-            placeholder="Type"
-            key={form.key('Type')}
+            label="Place"
+            placeholder="Place"
+            key={form.key('Place')}
             data={['Hybrid', 'On-Site', 'Remote']}
-            {...form.getInputProps('type')}
+            {...form.getInputProps('place')}
         />
         <TagsInput
             label="Business"

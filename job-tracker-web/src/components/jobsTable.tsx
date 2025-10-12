@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import cx from 'clsx';
 import {
     ActionIcon,
@@ -14,11 +14,13 @@ import {
   TextInput,
   UnstyledButton,
 } from '@mantine/core';
-import { IconArticle, IconChevronDown, IconChevronUp, IconPencil, IconSearch, IconSelector } from '@tabler/icons-react';
+import { IconArticle, IconChevronDown, IconChevronUp, IconSearch, IconSelector } from '@tabler/icons-react';
 import classes from './../styles/TableSort.module.css';
 
 import Link from 'next/link';
-import { JobStatus, RowData } from '@/pages/jobs';
+import { JobOutput } from '@/client';
+import { currentJobList } from '@/providers/jobs/jobListProvider';
+import LoadingLayout from './loadingLayout';
 
 
 interface ThProps {
@@ -46,20 +48,19 @@ function Th({ children, reversed, sorted, onSort }: ThProps) {
   );
 }
 
-function filterData(data: RowData[], search: string) {
-    console.log("search", search)
+function filterData(data: JobOutput[], search: string) {
     if (!search) {
         return data
     }
   const query = search.toLowerCase().trim();
   return data.filter((item) =>
-    keys(data[0]).some((key) => item[key].toString().toLowerCase().includes(query))
+    keys(data[0]).some((key) => item[key] && item[key].toString().toLowerCase().includes(query))
   );
 }
 
 function sortData(
-  data: RowData[],
-  payload: { sortBy: keyof RowData | null; reversed: boolean; search: string }
+  data: JobOutput[],
+  payload: { sortBy: keyof JobOutput | null; reversed: boolean; search: string }
 ) {
     const { sortBy } = payload;
 
@@ -69,206 +70,206 @@ function sortData(
 
     return filterData(
         [...data].sort((a, b) => {
+        const aValue = Array.isArray(a[sortBy]) ? a[sortBy].join(', ') : a[sortBy];
+        const bValue = Array.isArray(b[sortBy]) ? b[sortBy].join(', ') : b[sortBy];
         if (payload.reversed) {
-            return b[sortBy].localeCompare(a[sortBy]);
+            return (bValue ?? '').localeCompare(aValue ?? '');
         }
-        return a[sortBy].localeCompare(b[sortBy]);
+        return (aValue ?? '').localeCompare(bValue ?? '');
         }),
         payload.search
     );
 }
 
 
-export default interface JobsTableProps {
-    data: any,
-    setData: any
-}
-
-export function JobsTable(props: JobsTableProps) {
+export function JobsTable() {
     // const initialData = props.initialData
     const isLoading = false
+
+    const [data, setData, loading] = useContext(currentJobList)
+
+    if (loading) {
+        return <LoadingLayout/>
+    }
     const [search, setSearch] = useState('');
-    const sortedData = props.data
-    const setSortedData = props.setData
-    // const [sortedData, setSortedData] = useState(initialData);
-    const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
+    const [sortedData, setSortedData] = useState(data);
+
+    const [sortBy, setSortBy] = useState<keyof JobOutput | null>(null);
     const [reverseSortDirection, setReverseSortDirection] = useState(false);
 
     const [selection, setSelection] = useState<string[]>([]);
 
-    const setSorting = (field: keyof RowData) => {
+    const setSorting = (field: keyof JobOutput) => {
         const reversed = field === sortBy ? !reverseSortDirection : false;
         setReverseSortDirection(reversed);
         setSortBy(field);
-        setSortedData(sortData(props.data, { sortBy: field, reversed, search }));
+        setSortedData(sortData([...data], { sortBy: field, reversed, search }));
         setSelection([]); // reset selection on new sort
     };
 
-    const handleSearchChange = (query: React.ChangeEvent<HTMLTextAreaElement>) => {
-        console.log("typeof(query)",typeof(query))
-        const value = query.currentTarget.value
-        console.log("value", value)
-        // if (!value){ return } 
-        setSearch(value); 
-         // reset selection on search
+    const handleSearchChange = (query: React.ChangeEvent<HTMLInputElement>) => {
+        console.log("typeof(query)", typeof(query));
+        const value = query.currentTarget.value;
+        console.log("value", value);
+        setSearch(value);
     };
 
     const handleSearch = () => {
-        setSortedData(sortData(props.data, { sortBy, reversed: reverseSortDirection, search: search }));
+        setSortedData(sortData(sortedData, { sortBy, reversed: reverseSortDirection, search: search }));
         setSelection([]);
+        setSortedData(sortData([...data], { sortBy, reversed: reverseSortDirection, search }));
     }
-    const rows = sortedData.map((row) => {
-    const selected = selection.includes(row.id);
-    console.log("row.status",row.status)
-    return (
-      <Table.Tr key={row.id} className={cx({ [classes.rowSelected]: selected })}>
-        <Table.Td>
-            <ActionIcon 
-                component={Link} 
-                href={`/jobs/${row.id}`}
-            >
-                <IconArticle/>
-            </ActionIcon>
-        </Table.Td>
-        <Table.Td>{row.title}</Table.Td>
-        <Table.Td>{row.company}</Table.Td>
-        <Table.Td>{row.location}</Table.Td>
-        <Table.Td>{row.contract}</Table.Td>
-        <Table.Td>{row.type}</Table.Td>
-        <Table.Td>{row.business}</Table.Td>
-        <Table.Td>{row.status}</Table.Td>
-        {/* <Table.Td>{Object.keys(JobStatus).find(key => key === row.status)}</Table.Td> */}
-        <Table.Td>{row.date}</Table.Td>
-        <Table.Td>
-            {
-                row.url ?
-                <Link href={row.url}>Link
-                </Link> :
-                "No Link"
-            }
-        </Table.Td> 
-      </Table.Tr>
-    );
-  });
 
-  return (
-    <>  
-        <div>
-            <TextInput
-                placeholder="Search by any field"
-                mb="md"
-                leftSection={<IconSearch size={16} stroke={1.5} />}
-                value={search}
-                onChange={(value) => handleSearchChange(value)}
-            />
-            <Button 
-                variant="default" 
-                onClick={handleSearch} 
-                leftSection={<IconSearch size={14}/>}
-                loading={isLoading}
-                disabled={search.length == 0}
-            >   
-                Search
-            </Button>
-        </div>
-        <ScrollArea>
-            <Table 
-                striped 
-                highlightOnHover 
-                withColumnBorders 
-                miw={800} 
-                verticalSpacing="sm" 
-                horizontalSpacing="md"
-            >
-                <Table.Thead>
+    const rows = sortedData.map((row: JobOutput) => {
+        const selected = selection.includes(row.id);
+        console.log("row.status",row.status)
+        return (
+        <Table.Tr key={row.id} className={cx({ [classes.rowSelected]: selected })}>
+            <Table.Td>
+                <ActionIcon 
+                    component={Link} 
+                    href={`/jobs/${row.id}`}
+                >
+                    <IconArticle/>
+                </ActionIcon>
+            </Table.Td>
+            <Table.Td>{row.title}</Table.Td>
+            <Table.Td>{row.company}</Table.Td>
+            <Table.Td>{row.location}</Table.Td>
+            <Table.Td>{row.contract}</Table.Td>
+            <Table.Td>{row.place}</Table.Td>
+            <Table.Td>{row.business}</Table.Td>
+            <Table.Td>{row.status}</Table.Td>
+            <Table.Td>{row.applied_at}</Table.Td>
+            <Table.Td>
+                {
+                    row.url ?
+                    <Link href={row.url}>Link
+                    </Link> :
+                    "No Link"
+                }
+            </Table.Td> 
+        </Table.Tr>
+        );
+    });
+    return (
+        <>  
+            <div>
+                <TextInput
+                    placeholder="Search by any field"
+                    mb="md"
+                    leftSection={<IconSearch size={16} stroke={1.5} />}
+                    value={search}
+                    onChange={(value) => handleSearchChange(value)}
+                />
+                <Button 
+                    variant="default" 
+                    onClick={handleSearch} 
+                    leftSection={<IconSearch size={14}/>}
+                    loading={isLoading}
+                    disabled={search.length == 0}
+                >   
+                    Search
+                </Button>
+            </div>
+            <ScrollArea>
+                <Table 
+                    striped 
+                    highlightOnHover 
+                    withColumnBorders 
+                    miw={800} 
+                    verticalSpacing="sm" 
+                    horizontalSpacing="md"
+                >
+                    <Table.Thead>
+                        <Table.Tr>
+                            <Table.Th w={40}>
+                                {/* <Checkbox
+                                    onChange={toggleAll}
+                                    checked={selection.length === sortedData.length && sortedData.length > 0}
+                                    indeterminate={selection.length > 0 && selection.length !== sortedData.length}
+                                /> */}
+                            </Table.Th>
+                            <Th
+                                sorted={sortBy === 'title'}
+                                reversed={reverseSortDirection}
+                                onSort={() => setSorting('title')}
+                            >
+                                Title
+                            </Th>
+                            <Th
+                                sorted={sortBy === 'company'}
+                                reversed={reverseSortDirection}
+                                onSort={() => setSorting('company')}
+                            >
+                                Company
+                            </Th>
+                            <Th
+                                sorted={sortBy === 'location'}
+                                reversed={reverseSortDirection}
+                                onSort={() => setSorting('location')}
+                                >
+                                Location
+                            </Th>
+                            <Th
+                                sorted={sortBy === 'contract'}
+                                reversed={reverseSortDirection}
+                                onSort={() => setSorting('contract')}
+                                >
+                                Contract
+                            </Th>
+                            <Th
+                                sorted={sortBy === 'place'}
+                                reversed={reverseSortDirection}
+                                onSort={() => setSorting('place')}
+                                >
+                                Type
+                            </Th>
+                            <Th
+                                sorted={sortBy === 'business'}
+                                reversed={reverseSortDirection}
+                                onSort={() => setSorting('business')}
+                                >
+                                Business
+                            </Th>
+                            <Th
+                                sorted={sortBy === 'status'}
+                                reversed={reverseSortDirection}
+                                onSort={() => setSorting('status')}
+                                >
+                                Status
+                            </Th>
+                            <Th
+                                sorted={sortBy === 'applied_at'}
+                                reversed={reverseSortDirection}
+                                onSort={() => setSorting('applied_at')}
+                                >
+                                Application Date
+                            </Th>
+                            <Th
+                                sorted={sortBy === 'url'}
+                                reversed={reverseSortDirection}
+                                onSort={() => setSorting('url')}
+                                >
+                                URl
+                            </Th>
+                        </Table.Tr>
+                    </Table.Thead>
+                <Table.Tbody>
+                {rows.length > 0 ? (
+                    rows
+                ) : (
                     <Table.Tr>
-                        <Table.Th w={40}>
-                            {/* <Checkbox
-                                onChange={toggleAll}
-                                checked={selection.length === sortedData.length && sortedData.length > 0}
-                                indeterminate={selection.length > 0 && selection.length !== sortedData.length}
-                            /> */}
-                        </Table.Th>
-                        <Th
-                            sorted={sortBy === 'title'}
-                            reversed={reverseSortDirection}
-                            onSort={() => setSorting('title')}
-                        >
-                            Title
-                        </Th>
-                        <Th
-                            sorted={sortBy === 'company'}
-                            reversed={reverseSortDirection}
-                            onSort={() => setSorting('company')}
-                        >
-                            Company
-                        </Th>
-                        <Th
-                            sorted={sortBy === 'location'}
-                            reversed={reverseSortDirection}
-                            onSort={() => setSorting('location')}
-                            >
-                            Location
-                        </Th>
-                        <Th
-                            sorted={sortBy === 'contract'}
-                            reversed={reverseSortDirection}
-                            onSort={() => setSorting('contract')}
-                            >
-                            Contract
-                        </Th>
-                        <Th
-                            sorted={sortBy === 'type'}
-                            reversed={reverseSortDirection}
-                            onSort={() => setSorting('type')}
-                            >
-                            Type
-                        </Th>
-                        <Th
-                            sorted={sortBy === 'business'}
-                            reversed={reverseSortDirection}
-                            onSort={() => setSorting('business')}
-                            >
-                            Business
-                        </Th>
-                        <Th
-                            sorted={sortBy === 'status'}
-                            reversed={reverseSortDirection}
-                            onSort={() => setSorting('status')}
-                            >
-                            Status
-                        </Th>
-                        <Th
-                            sorted={sortBy === 'date'}
-                            reversed={reverseSortDirection}
-                            onSort={() => setSorting('date')}
-                            >
-                            Application Date
-                        </Th>
-                        <Th
-                            sorted={sortBy === 'url'}
-                            reversed={reverseSortDirection}
-                            onSort={() => setSorting('url')}
-                            >
-                            URl
-                        </Th>
+                    <Table.Td colSpan={10}>
+                        <Text fw={500} ta="center">
+                        No Job Found. Start by add a new job to your list.
+                        </Text>
+                    </Table.Td>
                     </Table.Tr>
-                </Table.Thead>
-            <Table.Tbody>
-            {rows.length > 0 ? (
-                rows
-            ) : (
-                <Table.Tr>
-                <Table.Td colSpan={4}>
-                    <Text fw={500} ta="center">
-                    Nothing found
-                    </Text>
-                </Table.Td>
-                </Table.Tr>
-            )}
-            </Table.Tbody>
-        </Table>
-        </ScrollArea>
-    </>
-  );
+                )}
+                </Table.Tbody>
+            </Table>
+            </ScrollArea>
+        </>
+    );
 }
