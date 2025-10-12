@@ -40,8 +40,8 @@ async def verify_token(token: str = Security(security)):
             token,
             rsa_key,
             algorithms=settings.algorithms,
-            audience="https://job-tracker.eu.auth0.com/userinfo",
-            # audience=settings.auth0_audience,
+            # audience="https://job-tracker.eu.auth0.com/userinfo",
+            audience=settings.auth0_audience,
             issuer=f"https://{settings.auth0_domain}/"
         )
     except JWTError as e:
@@ -55,7 +55,8 @@ async def get_user_info(user_id: str):
             "grant_type": "client_credentials",
             "client_id": settings.auth0_client_id,
             "client_secret": settings.auth0_client_secret,
-            "audience": f"https://{settings.auth0_domain}/api/v2/"
+            "audience": settings.auth0_audience
+            # "audience": f"https://{settings.auth0_domain}/api/userinfo"
         }
         token_resp = await client.post(f"https://{settings.auth0_domain}/oauth/token", json=data)
         token_resp.raise_for_status()

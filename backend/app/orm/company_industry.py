@@ -4,7 +4,8 @@ from sqlmodel import SQLModel, Field, Column, DateTime
 from sqlalchemy.sql import func
 import uuid
 
-class Job(SQLModel, table=True):
+class CompanyIndustry(SQLModel, table=True):
+    __tablename__ = "company_industry"
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     created_at: datetime = Field(
         default=None,
@@ -14,15 +15,5 @@ class Job(SQLModel, table=True):
         default=None,
         sa_column=Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
     )
-    user_id: uuid.UUID | None = Field(default=None, foreign_key="user.id")
-    role_id: uuid.UUID | None = Field(default=None, foreign_key="role.id")
     company_id: uuid.UUID | None = Field(default=None, foreign_key="company.id")
-    location_id: uuid.UUID | None = Field(default=None, foreign_key="location.id")
-
-    contract: str | None = Field(default=None)
-    place: str | None = Field(default=None)
-    status: str | None = Field(default=None)
-    applied_at: str | None = Field(default=None)
-    url: str | None = Field(default=None)
-
-    description: str | None = Field(default=None)
+    industry_id: uuid.UUID | None = Field(default=None, foreign_key="industry.id")

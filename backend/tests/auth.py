@@ -1,6 +1,4 @@
-import os
-import pytest
-import httpx
+import os, pytest, httpx
 from dotenv import load_dotenv
 
 load_dotenv(".env.test")
