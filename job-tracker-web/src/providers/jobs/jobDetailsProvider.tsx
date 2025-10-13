@@ -9,7 +9,7 @@ export const CurrentJobDetailsProvider = ( { children }: { children: any }) => {
     const { user } = useUser();
     const [ jobDetails, setJobDetails ] = useState<JobOutput>()
     const { token, isLoading: tokenLoading } = useAuth();
-    const [loading, setLoading] = useState(true);
+    const [ loading, setLoading ] = useState(true);
     const router = useRouter();
     const { job_id } = router.query;
     useEffect(() => {

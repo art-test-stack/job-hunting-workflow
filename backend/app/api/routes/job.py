@@ -35,7 +35,7 @@ async def get_user_job(
     jobs = _get_jobs_by_user_id(db=db, user_id=user_id)
     return jobs
 
-@router.get("/detail", response_model=JobOutputDetails)
+@router.get("/details", response_model=JobOutputDetails)
 async def get_user_job_by_id(
         db: SessionDep, 
         user=Depends(verify_token), 

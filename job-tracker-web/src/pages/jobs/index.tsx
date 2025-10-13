@@ -30,7 +30,7 @@ export default function Jobs() {
     
     return (
         <CurrentJobListProvider>
-            <AddJob/> <br />
+            <AddJob/>  <br />
             <JobsTable/>
         </CurrentJobListProvider>
     );
