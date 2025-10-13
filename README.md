@@ -35,6 +35,45 @@ python main.py
 gradio main.py --demo-name=app     
 ```
 
+## Depedencies
+### Backend
+
+<p align="center">
+  <a href="https://skillicons.dev">
+    <img src="https://skillicons.dev/icons?i=python,fastapi,postgresql,sqlite"/>
+  </a>
+  <a href="https://skillicons.dev">
+    <br/>
+    <!-- <img src="https://img.shields.io/badge/SQLite-%2307405e.svg?style=for-the-badge&logo=sqlite&logoColor=white)"/> -->
+</a>
+</p>
+
+
+### Front-end
+
+<p align="center">
+  <a href="https://skillicons.dev">
+    <img src="https://skillicons.dev/icons?i=npm,js,ts,css,html,react" />
+  </a>
+  <a href="https://skillicons.dev">
+    <br/>
+    <img src="https://img.shields.io/badge/Mantine-ffffff?style=for-the-badge&logo=Mantine&logoColor=339af0"/>
+	<img src="https://img.shields.io/badge/OpenAPI-6BA539?style=for-the-badge&logo=openapiinitiative&logoColor=white"/>
+    </a>
+</p>
+
+### Gradio demo
+
+<p align="center">
+  <a href="https://skillicons.dev">
+    <img src="https://skillicons.dev/icons?i=python" />
+  </a>
+  <a href="https://skillicons.dev">
+    <br/>
+    <img src="https://img.shields.io/badge/Gradio-F97316?style=for-the-badge&logo=Gradio&logoColor=white"/>
+    </a>
+</p>
+
 ## Features in coming
 
 - Dashboard: the user can track its own main statistics.
