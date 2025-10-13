@@ -12,26 +12,13 @@ export enum JobStatus {
   Accepted = 'Accepted',
 }
 
-export interface RowData {
-    id: string;
-    title: string;
-    company: string;
-    location: string;
-    contract: string;
-    type: string;
-    business: string;
-    url: string;
-    status: JobStatus;
-    date: string
-}
-
-
 export default function Jobs() {
     
     return (
         <CurrentJobListProvider>
             <AddJob/>  <br />
             <JobsTable/>
+
         </CurrentJobListProvider>
     );
 }

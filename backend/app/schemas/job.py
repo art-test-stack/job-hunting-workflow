@@ -1,7 +1,16 @@
 from sqlmodel import SQLModel, Field
 from sqlalchemy.sql import func
 import uuid
+from enum import Enum
 
+
+class JobStatus(str, Enum):
+    NotSent = "Not Sent"
+    Applied = "Applied"
+    Interview = "Interviewing"
+    Offer = "Offer Received"
+    Rejected = "Rejected"
+    Accepted = "Accepted"
 
 class JobInput(SQLModel):
     user_id: str
@@ -11,6 +20,7 @@ class JobInput(SQLModel):
     contract: str | None = Field(default=None)
     place: str | None = Field(default=None)
     business: str | None = Field(default=None)
+    status: JobStatus
     url: str | None = Field(default=None)
 
 class CreateJob(SQLModel):

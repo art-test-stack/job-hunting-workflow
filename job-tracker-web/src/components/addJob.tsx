@@ -6,12 +6,14 @@ import { addJobJobAddPost } from "@/client";
 import { useUser } from "@auth0/nextjs-auth0";
 import { useContext } from "react";
 import { currentJobList } from "@/providers/jobs/jobListProvider";
+import { useAuth } from "@/providers/auth/authProvider";
 
 
 export default function AddJob() {
     const [data, setData, loading] = useContext(currentJobList)
     const { user } = useUser()
     const [opened, { open, close }] = useDisclosure(false); 
+    const { token, isLoading: tokenLoading } = useAuth();
     const addJobForm = useForm({
         initialValues: {
             title: "",
@@ -30,13 +32,14 @@ export default function AddJob() {
     }
     const onSubmit = async () => {
         try {
-            const response = await addJobJobAddPost({ 
-                ...addJobForm.values, 
-                query: {
-                    user_id: user?.sub,
-                    ...addJobForm.values, 
-                } 
-            });
+                const response = await addJobJobAddPost({
+                    query: {
+                        user_id: user?.sub,
+                        ...addJobForm.values}, 
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }}
+            );
             if (response.data) {
                 setData([...data, response.data]);
             }

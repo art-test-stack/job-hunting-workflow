@@ -108,7 +108,7 @@ def _add_job_for_user(db: Session, user_id: str, data: JobInput):
     db.add(user_job)
     db.commit()
 
-    for business in data.business.split(","):
+    for business in data.business.split(",") if data.business else []:
         _add_job_industry(db, user_job.id, company.id, business)
 
     db.refresh(user_job)

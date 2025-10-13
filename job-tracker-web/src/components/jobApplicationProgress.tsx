@@ -1,6 +1,6 @@
 import { JobStatus } from '@/pages/jobs';
 import { currentJobList } from '@/providers/jobs/jobListProvider';
-import { Center, SemiCircleProgress } from '@mantine/core';
+import { Center, MenuDropdown, Select, SemiCircleProgress } from '@mantine/core';
 import { useContext } from 'react';
 import LoadingLayout from './loadingLayout';
 import { currentJobDetails, JobDetailsContext } from '@/providers/jobs/jobDetailsProvider';
@@ -27,18 +27,26 @@ const jobStatusProgressColor = (jobStatus: string) => {
   // jobStatus == JobStatus.Rejected ? "red" : jobStatus == JobStatus.Offer ? "green" : "blue"
 }
 
-export interface JobApplicationProgressProps {
-  jobId: string | string[] | undefined
-}
+// export interface JobApplicationProgressProps {
+//   jobId: string | string[] | undefined
+// }
 
-export default function JobApplicationProgress( props: JobApplicationProgressProps ) {
-  const [ data, useData, loading ] = useContext(JobDetailsContext)
-  console.log("data", data)
+export default function JobApplicationProgress() {
+  const [ data, setData, loading ] = useContext(JobDetailsContext)
   if (loading) { return <LoadingLayout/> }
   const jobStatus = data?.status
-  console.log("jobStatus", jobStatus)
   const progressValue = jobStatusProgressMap[jobStatus];
   const filledSegmentColor = jobStatusProgressColor(jobStatus)
+  const jobStatusDropDown = (
+      <Select
+          label="Status"
+          placeholder="Pick a Status"
+          data={Object.values(JobStatus)}
+          defaultValue={jobStatus}
+          onSelect={(value) => setData({...data, status: value})}
+      />
+
+  )
   return (
     <Center>
       <SemiCircleProgress
@@ -48,7 +56,7 @@ export default function JobApplicationProgress( props: JobApplicationProgressPro
         size={200}
         thickness={12}
         value={progressValue}
-        label={jobStatus}
+        label={jobStatusDropDown}
         transitionDuration={200}
       />
     </Center>

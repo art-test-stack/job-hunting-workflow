@@ -80,3 +80,26 @@ gradio main.py --demo-name=app
 - Autofill profile: the user can submit his resume/CV to auto-fill its profile.
 - Todo page: the user can see and prioritize the following tasks for its job application/interview management. 
 - Future: include HR environment which permits HR from a company to get top-$k$ profile based on the job description. 
+- Autofill Job Description: merges internally user's jobs to automatically fill-in job description for other users.
+
+## Contributing
+
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
+Don't forget to give the project a star! Thanks again!
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+
+## Contact
+
+Arthur Testard - [arthur.testard.pro@gmail.com](mailto:arthur.testard.pro@gmail.com)
+
+Project Link: [https://github.com/art-test-stack/job-hunting-workflow](https://github.com/art-test-stack/job-hunting-workflow)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>

@@ -1,4 +1,5 @@
 import {
+  Icon,
   IconBook,
   IconChartPie3,
   IconChevronDown,
@@ -6,6 +7,7 @@ import {
   IconCoin,
   IconFingerprint,
   IconNotification,
+  IconProps,
 } from '@tabler/icons-react';
 import {
   Anchor,
@@ -31,51 +33,9 @@ import { Logo } from './logo';
 import { AuthLoginButton } from '@/providers/auth/authButton';
 import { useUser } from '@auth0/nextjs-auth0';
 import Link from 'next/link';
+import { RefAttributes } from 'react';
+import { profileLayout } from './profileLayout';
 
-const mockdata = [
-  {
-    icon: IconNotification,
-    title: 'Summary',
-    description: 'Provide a brief summary of your career goals and profile.',
-    href: '/summary',
-  },
-  {
-    icon: IconBook,
-    title: 'Headers',
-    description: 'Customize the headers to organize your job applications.',
-    href: '/headers',
-  },
-  {
-    icon: IconBook,
-    title: 'Education',
-    description: 'Add and manage your educational background.',
-    href: '/education',
-  },
-  {
-    icon: IconCoin,
-    title: 'Experiences',
-    description: 'Document your professional experiences and achievements.',
-    href: '/experiences',
-  },
-  {
-    icon: IconFingerprint,
-    title: 'Skills',
-    description: 'Highlight your key skills and competencies.',
-    href: '/skills',
-  },
-  {
-    icon: IconChartPie3,
-    title: 'Activities',
-    description: 'Track extracurricular activities and volunteer work.',
-    href: '/activities',
-  },
-  {
-    icon: IconChevronDown,
-    title: 'Languages',
-    description: 'List the languages you speak and your proficiency levels.',
-    href: '/languages',
-  },
-];
 
 export function HeaderMenu() {
   const { user, isLoading } = useUser();
@@ -83,16 +43,16 @@ export function HeaderMenu() {
   const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
   const theme = useMantineTheme();
 
-  const links = mockdata.map((item) => (
-    <Link href={"/profile"+item.href}>
-      <UnstyledButton className={classes.subLink} key={item.title}>
+  const links = profileLayout.map((item) => (
+    <Link href={`/profile/${item.href}`}>
+      <UnstyledButton className={classes.subLink} key={item.label}>
         <Group wrap="nowrap" align="flex-start">
           <ThemeIcon size={34} variant="default" radius="md">
             <item.icon size={22} color={theme.colors.blue[6]} />
           </ThemeIcon>
           <div>
             <Text size="sm" fw={500}>
-              {item.title}
+              {item.label}
             </Text>
             <Text size="xs" c="dimmed">
               {item.description}
